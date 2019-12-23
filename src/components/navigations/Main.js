@@ -1,6 +1,27 @@
-import { createAppContainer } from 'react-navigation'
-import DrawerNavigator from './Drawer'
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import DrawerNavigator from './Drawer';
+import Queue from './../screens/Queue';
+import {createStackNavigator} from 'react-navigation-stack';
+const Navigation = createStackNavigator(
+  {
+    // Login: Auth,
+    Home: DrawerNavigator,
+    Queue: {
+      screen: Queue,
+    },
+  },
+  {
+    headerMode: 'none',
+    initialRouteKey: 'Home',
+  },
+);
 
-const MainNav = createAppContainer(DrawerNavigator)
+const switchScreen = createSwitchNavigator({
+  //   Splash: Splash,
+  //   AuthScreen: Auth,
+  App: Navigation,
+});
 
-export default MainNav
+const MainNav = createAppContainer(switchScreen);
+
+export default MainNav;
