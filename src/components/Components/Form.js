@@ -49,10 +49,32 @@ export default class Form extends Component {
 						Login
 					</Text>
 				</TouchableOpacity>
+				<TouchableOpacity
+					// onPress={() => this.props.navigation.replace('Register')}
+					onPress={() =>
+						this.props.navigation.replace('Register', {
+							itemId: 2,
+							name: 'siska eee',
+						})
+					}
+					style={{ alignSelf: 'center' }}>
+					<Text style={{ color: '#403E57', fontSize: 13, marginTop: '5%' }}>
+						You don't have have an account?{' '}
+						<Text
+							style={{
+								color: '#0f234e',
+								fontWeight: '500',
+								fontFamily: 'bold',
+							}}>
+							Register Now
+						</Text>
+					</Text>
+				</TouchableOpacity>
 			</View>
 		)
 	}
 }
+
 const styles = StyleSheet.create({
 	header: {
 		marginTop: '50%',
