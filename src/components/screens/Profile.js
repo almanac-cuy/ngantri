@@ -29,7 +29,7 @@ export default class Profile extends Component {
 						<View style={styles.body}>
 							<View style={styles.bodyContent}>
 								<Text style={styles.name}>Afshori Project Manager</Text>
-								<Text style={styles.email}>afshori@gmail.com</Text>
+								<Text style={styles.email}>afshorilead@gmail.com</Text>
 								<View style={styles.line}></View>
 								<View style={styles.menuinner}>
 									<Icon
