@@ -28,7 +28,7 @@ class Register extends Component {
 				{/* <StatusBar backgroundColor="white" /> */}
 
 				{/* <ImageBackground> */}
-				<Image />
+				{/* <Image /> */}
 				{/*READY lOGIN*/}
 
 				{/*READY FORM INPUT*/}

@@ -33,6 +33,11 @@ import Register from '../screens/Register'
 import Login from '../screens/Login'
 import Home from '../screens/Home'
 import DrawerNavigator from './Drawer'
+import Queue from '../screens/Queue'
+import ServiceDukCapil from '../screens/ServiceDukCapil'
+import ServicePuskesmas from '../screens/ServicePuskesmas'
+import ListDukCapil from '../screens/ListDukCapil'
+import ListPuskesmas from '../screens/ListPuskesmas'
 // const MainNav = createAppContainer(DrawerNavigator)
 
 const AuthStack = createStackNavigator(
@@ -50,6 +55,12 @@ const AppStack = createStackNavigator(
 	{
 		DrawerNavigator: DrawerNavigator,
 		Home: Home,
+		ListDukCapil: ListDukCapil,
+
+		ServiceDukCapil: ServiceDukCapil,
+		ListPuskesmas: ListPuskesmas,
+		ServicePuskesmas: ServicePuskesmas,
+		Queue: Queue,
 	},
 	{
 		initialRouteName: 'DrawerNavigator',
@@ -71,4 +82,3 @@ const Router = createSwitchNavigator(
 
 export default createAppContainer(Router)
 // export default MainNav
-
