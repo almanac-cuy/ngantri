@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		color: '#0f234e',
 		marginTop: '5%',
+		// marginRight: '5%',
 		// marginBottom: 120,
 	},
 	button: {
