@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { View, Text, H1, H3, Thumbnail } from 'native-base'
-import axios from 'axios'
 import { TouchableOpacity, StatusBar, StyleSheet } from 'react-native'
 import {
 	Container,
@@ -14,29 +13,7 @@ import {
 	Content,
 } from 'native-base'
 class Home extends Component {
-	state = {
-		categories: [],
-	}
-	getCategory() {
-		axios
-			.get('http://192.168.100.149:9400/api/category')
-			.then(res => {
-				this.setState({
-					categories: res.data.categories,
-				})
-			})
-			.catch(err => {
-				console.log(err)
-			})
-	}
-
-	componentDidMount() {
-		this.getCategory()
-	}
-
 	render() {
-		const { categories } = this.state
-		console.log(categories)
 		return (
 			//   <View>
 			<Container>
@@ -73,11 +50,7 @@ class Home extends Component {
 				</View>
 				<View style={style.ContainerMenu}>
 					<TouchableOpacity
-						onPress={() => {
-							this.props.navigation.navigate('ListPuskesmas', {
-								idItem: categories[1]._id,
-							})
-						}}>
+						onPress={() => this.props.navigation.navigate('ListPuskesmas')}>
 						<View style={style.ContentMenu2}>
 							<View style={style.ContentMenu}>
 								<Thumbnail
@@ -97,11 +70,7 @@ class Home extends Component {
 					<View style={style.ContentMenu2}>
 						<View style={style.ContentMenu}>
 							<TouchableOpacity
-								onPress={() =>
-									this.props.navigation.navigate('ListPuskesmas', {
-										idItem: categories[2]._id,
-									})
-								}>
+								onPress={() => this.props.navigation.navigate('ListDukCapil')}>
 								<Thumbnail
 									square
 									source={{

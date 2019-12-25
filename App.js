@@ -12,6 +12,7 @@ import { View, Text } from 'react-native'
 // // import Login from './src/components/screens/Login'
 // import ListDukCapil from './src/components/screens/ListDukCapil'
 import Main from './src/components/navigations/Main'
+// import Profile from './src/components/screens/Profile'
 
 class App extends Component {
 	render() {
