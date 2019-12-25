@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { View, Text, H1, H3, Thumbnail } from 'native-base'
 import axios from 'axios'
-import { TouchableOpacity, StatusBar, StyleSheet } from 'react-native'
+
+import { TouchableOpacity, StatusBar, StyleSheet, Image } from 'react-native'
 import {
 	Container,
 	Header,
@@ -13,10 +14,17 @@ import {
 	Title,
 	Content,
 } from 'native-base'
+import AsyncStorage from '@react-native-community/async-storage'
+import jwt_decode from 'jwt-decode'
 class Home extends Component {
-	state = {
-		categories: [],
+	constructor(props) {
+		super(props)
+		this.state = {
+			profile: [],
+			categories: [],
+		}
 	}
+
 	getCategory() {
 		axios
 			.get('http://192.168.100.149:9400/api/category')
@@ -31,12 +39,22 @@ class Home extends Component {
 	}
 
 	componentDidMount() {
+		this.getProfile()
 		this.getCategory()
+	}
+
+	async getProfile() {
+		const data = await AsyncStorage.getItem('user_token')
+		this.setState({
+			profile: jwt_decode(data),
+		})
 	}
 
 	render() {
 		const { categories } = this.state
 		console.log(categories)
+		console.log('profile', this.state.profile)
+
 		return (
 			//   <View>
 			<Container>
@@ -54,7 +72,15 @@ class Home extends Component {
 					</Left>
 					{/* <Body><Title>Header</Title></Body> */}
 					<Right>
-						<Button
+						<TouchableOpacity>
+							<Image
+								style={{ height: 32, width: 32 }}
+								source={{
+									uri: `http:${this.state.profile.avatar}`,
+								}}
+							/>
+						</TouchableOpacity>
+						{/* <Button
 							transparent
 							onPress={() => this.props.navigation.navigate('Profile')}>
 							<Icon
@@ -62,12 +88,12 @@ class Home extends Component {
 								style={{ color: 'black' }}
 								name='user-circle'
 							/>
-						</Button>
+						</Button> */}
 					</Right>
 				</Header>
 				<View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
 					<H1 onPress={() => this.props.navigation.navigate('Profile')}>
-						Hai Arul
+						Hai {this.state.profile.name}
 					</H1>
 					<H3>Mau antri dimana?</H3>
 				</View>

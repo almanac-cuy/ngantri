@@ -1,35 +1,68 @@
 import React, { Component } from 'react'
+import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import {
-	StyleSheet,
-	Text,
-	View,
-	Image,
-	TouchableOpacity,
-	StatusBar,
-} from 'react-native'
-import { Icon } from 'native-base'
+	Container,
+	Header,
+	Left,
+	Button,
+	Icon,
+	Right,
+	Body,
+	Title,
+	H1,
+	H3,
+} from 'native-base'
+import jwt_decode from 'jwt-decode'
+import AsyncStorage from '@react-native-community/async-storage'
 
 export default class Profile extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			profile: [],
+		}
+	}
+
+	componentDidMount() {
+		this.getProfile()
+	}
+
+	async getProfile() {
+		const data = await AsyncStorage.getItem('user_token')
+		this.setState({
+			profile: jwt_decode(data),
+		})
+	}
+
 	render() {
+		console.log(this.state.profile)
+
 		return (
-			<>
-				<StatusBar backgroundColor='black' />
+			<Container>
 				<View style={{ flex: 1, backgroundColor: 'rgba(192,192,192,0.3)' }}>
 					<View style={styles.header}>
-						<Text style={styles.profiletag}>Profile</Text>
+						<TouchableOpacity
+							onPress={() => this.props.navigation.goBack()}
+							style={{ paddingTop: 10, paddingLeft: 10 }}>
+							<Icon
+								type='FontAwesome'
+								style={{ color: 'white' }}
+								name='arrow-left'
+							/>
+						</TouchableOpacity>
+						{/* <Text style={styles.profiletag}>Profile</Text> */}
 					</View>
 					<Image
 						style={styles.avatar}
 						source={{
-							uri:
-								'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&s',
+							uri: `http:${this.state.profile.avatar}`,
 						}}
 					/>
 					<View style={styles.wrapperBody}>
 						<View style={styles.body}>
 							<View style={styles.bodyContent}>
-								<Text style={styles.name}>Afshori Project Manager</Text>
-								<Text style={styles.email}>afshorilead@gmail.com</Text>
+								<Text style={styles.name}>{this.state.profile.name}</Text>
+								<Text style={styles.email}>{this.state.profile.email}</Text>
 								<View style={styles.line}></View>
 								<View style={styles.menuinner}>
 									<Icon
@@ -100,13 +133,23 @@ export default class Profile extends Component {
 						</View>
 					</View>
 				</View>
-			</>
+			</Container>
 		)
 	}
 }
+
+const style = StyleSheet.create({
+	header: {
+		backgroundColor: 'white',
+		elevation: 0,
+		borderBottomWidth: 1,
+		borderBottomColor: 'black',
+	},
+})
+
 const styles = StyleSheet.create({
 	header: {
-		backgroundColor: 'black',
+		backgroundColor: '#0f234e',
 		height: 270,
 		borderBottomRightRadius: 50,
 		borderBottomLeftRadius: 50,
@@ -122,7 +165,7 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 130,
 		height: 130,
-		borderRadius: 63,
+		borderRadius: 10,
 		borderWidth: 4,
 		borderColor: '#919191',
 		marginBottom: 10,
@@ -193,69 +236,3 @@ const styles = StyleSheet.create({
 		color: 'grey',
 	},
 })
-{
-	/* <TouchableOpacity
-	onPress={() => this.props.navigation.openDrawer()}
-	style={{ height: 20, width: 100, backgroundColor: 'red' }}> */
-}
-{
-	/* </TouchableOpacity> */
-}
-
-// import React, { Component } from 'react'
-// import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
-// import {
-// 	Container,
-// 	Header,
-// 	Left,
-// 	Button,
-// 	Icon,
-// 	Right,
-// 	Body,
-// 	Title,
-// 	H1,
-// 	H3,
-// } from 'native-base'
-
-// export default class Profile extends Component {
-// 	render() {
-// 		return (
-// 			<Container>
-// 				<Header style={style.header}>
-// 					<Left>
-// 						<Button transparent onPress={() => this.props.navigation.goBack()}>
-// 							<Icon
-// 								type='FontAwesome'
-// 								style={{ color: 'black' }}
-// 								name='arrow-left'
-// 							/>
-// 						</Button>
-// 					</Left>
-// 					<Body>
-// 						<Title style={{ color: 'black' }}>Profile</Title>
-// 					</Body>
-// 					<Right>
-// 						{/* <Button
-// 							transparent
-// 							onPress={() => this.props.navigation.navigate('Profile')}>
-// 							<Icon
-// 								type='FontAwesome5'
-// 								style={{ color: 'black' }}
-// 								name='user-circle'
-// 							/>
-// 						</Button> */}
-// 					</Right>
-// 				</Header>
-// 			</Container>
-// 		)
-// 	}
-// }
-
-// const style = StyleSheet.create({
-// 	header: {
-// 		backgroundColor: 'white',
-// 		elevation: 0,
-// 		borderBottomWidth: 1,
-// 		borderBottomColor: 'black',
-// 	},
-// })
