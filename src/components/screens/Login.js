@@ -1,13 +1,41 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
+import {
+	View,
+	TouchableOpacity,
+	StyleSheet,
+	Text,
+	ToastAndroid,
+} from 'react-native'
 import { Item, Input, Icon } from 'native-base'
+import Axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage'
 export default class Form extends Component {
-	constructor() {
-		super()
+	constructor(props) {
+		super(props)
 		this.state = {
 			showPass: true,
 			press: false,
+			visible: false,
+			toastMsg: '',
 		}
+	}
+
+	showToast = msg => {
+		this.setState(
+			{
+				visible: true,
+				toastMsg: msg,
+			},
+			() => {
+				this.hideToast()
+			}
+		)
+	}
+
+	hideToast = () => {
+		this.setState({
+			visible: false,
+		})
 	}
 	showPass = () => {
 		if (this.state.press == false) {
@@ -22,16 +50,59 @@ export default class Form extends Component {
 			})
 		}
 	}
+
+	handleLogin = async () => {
+		// this.showToast('Login')
+		const email = this.state.email
+		const password = this.state.password
+		// console.log('email:', email, '\n', 'password:', password)
+		const formData = new FormData()
+		formData.append('email', email)
+		formData.append('password', password)
+		Axios.post('http://192.168.100.149:9400/api/user/login', formData)
+			.then(async response => {
+				this.showToast('Login Succes')
+				console.log(response.data)
+				await AsyncStorage.setItem('user_token', response.data)
+				this.props.navigation.navigate('Home')
+			})
+			.catch(error => {
+				this.showToast('Login Failed')
+				console.log(error)
+			})
+	}
+
 	render() {
+		if (this.state.visible) {
+			ToastAndroid.showWithGravityAndOffset(
+				this.state.toastMsg,
+				ToastAndroid.LONG,
+				ToastAndroid.BOTTOM,
+				25,
+				50
+			)
+			return null
+		}
+
 		return (
 			<View style={styles.header}>
 				<Text style={styles.welcome}>Login</Text>
 				<Item style={{ marginBottom: 10 }}>
-					<Input placeholder='Email' />
+					<Input
+						placeholder={'Email'}
+						keyboardType={'email-address'}
+						autoCapitalize={'none'}
+						onChangeText={email => this.setState({ email: email })}
+					/>
 				</Item>
 
 				<Item>
-					<Input secureTextEntry={this.state.showPass} placeholder='Password' />
+					<Input
+						placeholder={'Password'}
+						onChangeText={password => this.setState({ password: password })}
+						secureTextEntry={this.state.showPass}
+						autoCapitalize='none'
+					/>
 					<TouchableOpacity onPress={this.showPass.bind(this)}>
 						<Icon
 							type='Entypo'
@@ -39,9 +110,7 @@ export default class Form extends Component {
 						/>
 					</TouchableOpacity>
 				</Item>
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => this.props.navigation.navigate('Home')}>
+				<TouchableOpacity style={styles.button} onPress={this.handleLogin}>
 					<Text
 						style={{
 							color: '#FFF',

@@ -8,72 +8,146 @@ import {
 	Image,
 	ImageBackground,
 	StatusBar,
+	ToastAndroid,
 } from 'react-native'
 import { Form, Item, Label, Icon, Input } from 'native-base'
+import Axios from 'axios'
 
 class Register extends Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			username: '',
+			name: '',
 			email: '',
 			password: '',
-			isSecure: true,
+			phone: '',
+			showPass: true,
+			press: false,
+			visible: false,
+			toastMsg: '',
 		}
 	}
+
+	showToast = msg => {
+		this.setState(
+			{
+				visible: true,
+				toastMsg: msg,
+			},
+			() => {
+				this.hideToast()
+			}
+		)
+	}
+
+	hideToast = () => {
+		this.setState({
+			visible: false,
+		})
+	}
+
+	showPass = () => {
+		if (this.state.press == false) {
+			this.setState({
+				showPass: false,
+				press: true,
+			})
+		} else {
+			this.setState({
+				showPass: true,
+				press: false,
+			})
+		}
+	}
+
+	handleRegister = () => {
+		const name = this.state.name
+		const email = this.state.email
+		const phone = this.state.phone
+		const password = this.state.password
+
+		if (email === '') {
+			this.showToast("email can't be empty")
+		} else if (name === '') {
+			this.showToast("name can't be empty")
+		} else if (password === '') {
+			this.showToast("password can't be empty")
+		} else if (phone === '') {
+			this.showToast("password can't be empty")
+		} else if (password.length < 6) {
+			this.showToast('password minimum 6 characters ')
+		} else {
+			const formData = new FormData()
+			formData.append('name', name)
+			formData.append('email', email)
+			formData.append('phone', phone)
+			formData.append('password', password)
+			// Axios.post("http://192.168.100.149:9400/api/user/register")
+			Axios.post('http://192.168.100.149:9400/api/user/register', formData)
+				.then(response => {
+					this.showToast('Succes Register')
+					// console.log('succes===>', response.data)
+					this.props.navigation.navigate('Login')
+				})
+				.catch(error => {
+					this.showToast('Failed Register')
+					console.log(error)
+				})
+		}
+	}
+
 	render() {
+		if (this.state.visible) {
+			ToastAndroid.showWithGravityAndOffset(
+				this.state.toastMsg,
+				ToastAndroid.LONG,
+				ToastAndroid.BOTTOM,
+				25,
+				50
+			)
+			return null
+		}
+
 		return (
 			<View>
-				{/* <StatusBar backgroundColor="white" /> */}
-
-				{/* <ImageBackground> */}
-				{/* <Image /> */}
-				{/*READY lOGIN*/}
-
-				{/*READY FORM INPUT*/}
-				{/* <Form>
-            <Item floatingLabel>
-              <Label>Username</Label>
-              <Input />
-            </Item>
-            <Item floatingLabel last>
-              <Label>Password</Label>
-              <Input />
-            </Item>
-          </Form> */}
-				<Text style={styles.welcome}>Please register at Almanac</Text>
+				<Text style={styles.welcome}>Register</Text>
 
 				<Form style={styles.form}>
 					<Item floatingLabel>
 						<Label>Email</Label>
-						<Input />
-					</Item>
-					<Item floatingLabel>
-						<Label>Username</Label>
-						<Input />
-					</Item>
-					<Item floatingLabel>
-						<Label>No. Telepon</Label>
-						<Input />
-					</Item>
-					<Item floatingLabel>
-						<Label>Password</Label>
-						<Input secureTextEntry autoCapitalize='none' />
-						<Icon
-							onPress={() => this.setState({ isSecure: !this.state.isSecure })}
-							type='FontAwesome5'
-							name={this.state.isSecure ? 'eye-slash' : 'eye'}
-							style={{ fontSize: 18, color: '#4B4C72' }}
+						<Input
+							keyboardType={'email-address'}
+							autoCapitalize={'none'}
+							onChangeText={email => this.setState({ email: email })}
 						/>
 					</Item>
 					<Item floatingLabel>
-						<Label>Confirm Password</Label>
-						<Input secureTextEntry autoCapitalize='none' />
+						<Label>Name</Label>
+						<Input
+							autoCapitalize={'words'}
+							onChangeText={name => this.setState({ name: name })}
+						/>
+					</Item>
+					<Item floatingLabel>
+						<Label>No. Telepon</Label>
+						<Input
+							keyboardType={'phone-pad'}
+							onChangeText={phone => this.setState({ phone: phone })}
+						/>
+					</Item>
+					<Item floatingLabel>
+						<Label>Password</Label>
+						<Input
+							onChangeText={password => this.setState({ password: password })}
+							secureTextEntry={this.state.showPass}
+							autoCapitalize='none'
+						/>
 						<Icon
-							onPress={() => this.setState({ isSecure: !this.state.isSecure })}
+							onPress={this.showPass.bind(this)}
 							type='FontAwesome5'
-							name={this.state.isSecure ? 'eye-slash' : 'eye'}
+							name={this.state.press == false ? 'eye-slash' : 'eye'}
+							// name={this.state.isSecure ? 'eye-slash' : 'eye'}
 							style={{ fontSize: 18, color: '#4B4C72' }}
 						/>
 					</Item>
@@ -90,8 +164,7 @@ class Register extends Component {
 
 							fontSize: 25,
 						}}>
-						{' '}
-						Create Account{' '}
+						Create Account
 					</Text>
 				</TouchableOpacity>
 
@@ -129,60 +202,20 @@ class Register extends Component {
 }
 
 const styles = StyleSheet.create({
-	//   backgroundContainer: {
-	//     flex: 1,
-	//     width: null,
-	//     height: null,
-	//     justifyContent: 'center',
-	//     alignItems: 'center',
-	//   },
 	welcome: {
 		fontSize: 30,
-		// fontWeight: '400',
 		textAlign: 'center',
 		color: '#0f234e',
 		marginTop: '5%',
-		// marginBottom: 120,
 	},
 	form: {
-		// marginTop: '5%',
-		// marginHorizontal: 80,
 		marginRight: '5%',
 	},
 	service: {
 		textAlign: 'center',
 		marginTop: '16%',
 	},
-	//   errorMessage: {
-	//     height: 72,
-	//     alignItems: 'center',
-	//     justifyContent: 'center',
-	//     marginHorizontal: 30,
-	//   },
-	//   error: {
-	//     color: '#E9446A',
-	//     fontSize: 13,
-	//     fontWeight: '600',
-	//     textAlign: 'center',
-	//   },
-	//   form: {
-	//     marginHorizontal: 30,
-	//     marginTop: '150%',
-	//   },
-	//   inputTitle: {
-	//     // color: '#8A8F9E',
-	//     fontSize: 15,
-	//     // marginTop: '10%',
-	//     // textTransform: 'uppercase',
-	//   },
-	//   input: {
-	//     // borderBottomColor: '#694be2',
-	//     borderBottomWidth: StyleSheet.hairlineWidth,
-	//     height: 40,
-	//     width: 300,
-	//     fontSize: 15,
-	//     // color: '#694be2',
-	//   },
+
 	button: {
 		marginTop: '10%',
 
