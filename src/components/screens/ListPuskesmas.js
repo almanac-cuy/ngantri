@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 import {
 	Image,
 	ScrollView,
@@ -22,7 +23,30 @@ import {
 // import ServicePuskesmas from './ServicePuskesmas'
 
 export default class ListPuskesmas extends Component {
+	state = {
+		idCategory: this.props.navigation.getParam('idItem'),
+		listInstances: [],
+	}
+
+	componentDidMount() {
+		const { idCategory } = this.state
+		axios
+			.get(
+				`http://192.168.100.149:9400/api/instances/search?cat_id=${idCategory}`
+			)
+			.then(response => {
+				this.setState({
+					listInstances: response.data.instance,
+				})
+			})
+			.catch(err => {
+				console.log(err)
+			})
+	}
+
 	render() {
+		const { listInstances } = this.state
+		console.log(listInstances)
 		return (
 			<View>
 				<TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -53,63 +77,66 @@ export default class ListPuskesmas extends Component {
 					<Container style={{ marginTop: '5%' }}>
 						<Content>
 							<View>
-								<TouchableOpacity
-									onPress={() =>
-										this.props.navigation.navigate('ServicePuskesmas')
-									}>
-									<Card
-										style={{
-											flex: 0,
-											marginLeft: '5%',
-											marginRight: '5%',
-											borderRadius: 20,
-										}}>
-										<CardItem
+								{listInstances.map(instance => (
+									<TouchableOpacity
+										key={instance._id}
+										onPress={() =>
+											this.props.navigation.navigate('ServicePuskesmas', {
+												idInstance: instance._id,
+											})
+										}>
+										<Card
 											style={{
-												alignItems: 'flex-start',
-												justifyContent: 'space-between',
+												flex: 0,
+												marginLeft: '5%',
+												marginRight: '5%',
+												borderRadius: 20,
 											}}>
-											<View
-												style={
-													{
-														// borderWidth: 1,
-														// marginRight: 120,
-													}
-												}>
-												<Image
-													source={{
-														uri:
-															'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Coat_of_arms_of_Yogyakarta.svg/1200px-Coat_of_arms_of_Yogyakarta.svg.png',
-													}}
-													style={{
-														height: 100,
-														width: 100,
-														resizeMode: 'contain',
-													}}
-												/>
-											</View>
-
-											<View
+											<CardItem
 												style={{
-													// left: 150,
-													// bottom: 40,
-
-													marginLeft: 10,
-													width: 170,
-													paddingRight: 40,
-													// borderWidth: 1,
+													alignItems: 'flex-start',
+													justifyContent: 'space-between',
 												}}>
-												<View>
-													<Text numberOfLines={1}>
-														Dukkkkkkkkkkkkkkcasssssssssssssssssssssssssssspil
-														sleman
-													</Text>
-													<Text numberOfLines={1}>Alamat :</Text>
+												<View
+													style={
+														{
+															// borderWidth: 1,
+															// marginRight: 120,
+														}
+													}>
+													<Image
+														source={{
+															uri: instance.image,
+														}}
+														style={{
+															height: 100,
+															width: 100,
+															resizeMode: 'contain',
+														}}
+													/>
 												</View>
-											</View>
-										</CardItem>
-									</Card>
-								</TouchableOpacity>
+
+												<View
+													style={{
+														// left: 150,
+														// bottom: 40,
+
+														marginLeft: 10,
+														width: 170,
+														paddingRight: 40,
+														// borderWidth: 1,
+													}}>
+													<View>
+														<Text numberOfLines={1}>{instance.name}</Text>
+														<Text numberOfLines={3}>
+															Alamat : {instance.address}
+														</Text>
+													</View>
+												</View>
+											</CardItem>
+										</Card>
+									</TouchableOpacity>
+								))}
 							</View>
 						</Content>
 					</Container>

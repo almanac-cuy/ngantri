@@ -39,6 +39,7 @@ import ServicePuskesmas from '../screens/ServicePuskesmas'
 import ListDukCapil from '../screens/ListDukCapil'
 import ListPuskesmas from '../screens/ListPuskesmas'
 // const MainNav = createAppContainer(DrawerNavigator)
+import Splash from './../screens/Splash'
 
 const AuthStack = createStackNavigator(
 	{
@@ -70,12 +71,13 @@ const AppStack = createStackNavigator(
 
 const Router = createSwitchNavigator(
 	{
+		Splash: Splash,
 		//   Loading: LoadingScreen,
 		DrawerNavigator: AppStack,
 		Auth: AuthStack,
 	},
 	{
-		initialRouteName: 'Auth',
+		initialRouteName: 'Splash',
 		headerMode: 'none',
 	}
 )
