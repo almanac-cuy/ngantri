@@ -178,7 +178,7 @@ export default class Form extends Component {
 					}
 					style={{ alignSelf: 'center' }}>
 					<Text style={{ color: '#403E57', fontSize: 13, marginTop: '5%' }}>
-						You don't have have an account?{' '}
+						You don't have have an account?
 						<Text
 							style={{
 								color: '#0f234e',
