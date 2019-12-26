@@ -1,5 +1,12 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import {
+	Text,
+	View,
+	TouchableOpacity,
+	StyleSheet,
+	Image,
+	StatusBar,
+} from 'react-native'
 import {
 	Container,
 	Header,
@@ -39,6 +46,7 @@ export default class Profile extends Component {
 
 		return (
 			<Container>
+				<StatusBar backgroundColor='#0f234e' />
 				<View style={{ flex: 1, backgroundColor: 'rgba(192,192,192,0.3)' }}>
 					<View style={styles.header}>
 						<TouchableOpacity
@@ -46,11 +54,10 @@ export default class Profile extends Component {
 							style={{ paddingTop: 10, paddingLeft: 10 }}>
 							<Icon
 								type='FontAwesome'
-								style={{ color: 'white' }}
+								style={{ color: 'white', fontSize: 20 }}
 								name='arrow-left'
 							/>
 						</TouchableOpacity>
-						{/* <Text style={styles.profiletag}>Profile</Text> */}
 					</View>
 					<Image
 						style={styles.avatar}
@@ -64,19 +71,7 @@ export default class Profile extends Component {
 								<Text style={styles.name}>{this.state.profile.name}</Text>
 								<Text style={styles.email}>{this.state.profile.email}</Text>
 								<View style={styles.line}></View>
-								<View style={styles.menuinner}>
-									<Icon
-										type='FontAwesome'
-										name='folder-open-o'
-										style={styles.iconMenuLeft}
-									/>
-									<Text style={styles.menuText}>My Projects</Text>
-									<Icon
-										type='Entypo'
-										name='chevron-thin-right'
-										style={styles.iconMenuRight}
-									/>
-								</View>
+
 								<View style={styles.menuinner}>
 									<Icon
 										type='FontAwesome5'
@@ -90,33 +85,13 @@ export default class Profile extends Component {
 										style={styles.iconMenuRight}
 									/>
 								</View>
-								<View style={styles.menuinner}>
-									<Icon
-										type='Foundation'
-										name='megaphone'
-										style={styles.iconMenuLeft}
-									/>
-									<Text style={styles.menuText}>Share with friends</Text>
-									<Icon
-										type='Entypo'
-										name='chevron-thin-right'
-										style={styles.iconMenuRight}
-									/>
-								</View>
-								<View style={styles.menuinner}>
-									<Icon
-										type='Ionicons'
-										name='md-chatbubbles'
-										style={styles.iconMenuLeft}
-									/>
-									<Text style={styles.menuText}>Review</Text>
-									<Icon
-										type='Entypo'
-										name='chevron-thin-right'
-										style={styles.iconMenuRight}
-									/>
-								</View>
-								<View style={styles.menuinner}>
+
+								<TouchableOpacity
+									style={styles.menuinner}
+									onPress={async () => {
+										await AsyncStorage.clear()
+										this.props.navigation.navigate('Auth')
+									}}>
 									<Icon
 										type='Foundation'
 										name='refresh'
@@ -128,7 +103,7 @@ export default class Profile extends Component {
 										name='chevron-thin-right'
 										style={styles.iconMenuRight}
 									/>
-								</View>
+								</TouchableOpacity>
 							</View>
 						</View>
 					</View>
@@ -138,19 +113,10 @@ export default class Profile extends Component {
 	}
 }
 
-const style = StyleSheet.create({
-	header: {
-		backgroundColor: 'white',
-		elevation: 0,
-		borderBottomWidth: 1,
-		borderBottomColor: 'black',
-	},
-})
-
 const styles = StyleSheet.create({
 	header: {
 		backgroundColor: '#0f234e',
-		height: 270,
+		height: 250,
 		borderBottomRightRadius: 50,
 		borderBottomLeftRadius: 50,
 	},

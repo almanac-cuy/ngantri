@@ -1,34 +1,6 @@
-// import {createAppContainer, createSwitchNavigator} from 'react-navigation';
-// import DrawerNavigator from './Drawer';
-// import Queue from './../screens/Queue';
-// import {createStackNavigator} from 'react-navigation-stack';
-// const Navigation = createStackNavigator(
-//   {
-//     // Login: Auth,
-//     Home: DrawerNavigator,
-//     Queue: {
-//       screen: Queue,
-//     },
-//   },
-//   {
-//     headerMode: 'none',
-//     initialRouteKey: 'Home',
-//   },
-// );
-
-// const switchScreen = createSwitchNavigator({
-//   //   Splash: Splash,
-//   //   AuthScreen: Auth,
-//   App: Navigation,
-// });
-
-// const MainNav = createAppContainer(switchScreen);
-
-// export default MainNav;
-
 import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
-
+import { fromRight } from 'react-navigation-transitions'
 import Register from '../screens/Register'
 import Login from '../screens/Login'
 import Home from '../screens/Home'
@@ -38,8 +10,9 @@ import ServiceDukCapil from '../screens/ServiceDukCapil'
 import ServicePuskesmas from '../screens/ServicePuskesmas'
 import ListDukCapil from '../screens/ListDukCapil'
 import ListPuskesmas from '../screens/ListPuskesmas'
-// const MainNav = createAppContainer(DrawerNavigator)
 import Splash from './../screens/Splash'
+import Done from '../screens/Done'
+import MapDirections from '../screens/MapDirections'
 
 const AuthStack = createStackNavigator(
 	{
@@ -49,6 +22,7 @@ const AuthStack = createStackNavigator(
 	{
 		initialRouteName: 'Login',
 		headerMode: 'none',
+		transitionConfig: () => fromRight(),
 	}
 )
 
@@ -57,30 +31,31 @@ const AppStack = createStackNavigator(
 		DrawerNavigator: DrawerNavigator,
 		Home: Home,
 		ListDukCapil: ListDukCapil,
-
 		ServiceDukCapil: ServiceDukCapil,
 		ListPuskesmas: ListPuskesmas,
 		ServicePuskesmas: ServicePuskesmas,
 		Queue: Queue,
+		Done,
+		MapDirections,
 	},
 	{
 		initialRouteName: 'DrawerNavigator',
 		headerMode: 'none',
+		transitionConfig: () => fromRight(),
 	}
 )
 
 const Router = createSwitchNavigator(
 	{
 		Splash: Splash,
-		//   Loading: LoadingScreen,
 		DrawerNavigator: AppStack,
 		Auth: AuthStack,
 	},
 	{
 		initialRouteName: 'Splash',
 		headerMode: 'none',
+		transitionConfig: () => fromRight(),
 	}
 )
 
 export default createAppContainer(Router)
-// export default MainNav
