@@ -3,12 +3,9 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	TextInput,
 	TouchableOpacity,
-	Image,
-	ImageBackground,
-	StatusBar,
 	ToastAndroid,
+	ActivityIndicator,
 } from 'react-native'
 import { Form, Item, Label, Icon, Input } from 'native-base'
 import Axios from 'axios'
@@ -26,6 +23,8 @@ class Register extends Component {
 			press: false,
 			visible: false,
 			toastMsg: '',
+			errors: null,
+			loadingBtn: false,
 		}
 	}
 
@@ -62,39 +61,37 @@ class Register extends Component {
 	}
 
 	handleRegister = () => {
+		this.setState({
+			loadingBtn: true,
+		})
 		const name = this.state.name
 		const email = this.state.email
 		const phone = this.state.phone
 		const password = this.state.password
 
-		if (email === '') {
-			this.showToast("email can't be empty")
-		} else if (name === '') {
-			this.showToast("name can't be empty")
-		} else if (password === '') {
-			this.showToast("password can't be empty")
-		} else if (phone === '') {
-			this.showToast("password can't be empty")
-		} else if (password.length < 6) {
-			this.showToast('password minimum 6 characters ')
-		} else {
-			const formData = new FormData()
-			formData.append('name', name)
-			formData.append('email', email)
-			formData.append('phone', phone)
-			formData.append('password', password)
-			// Axios.post("http://192.168.100.149:9400/api/user/register")
-			Axios.post('http://192.168.100.149:9400/api/user/register', formData)
-				.then(response => {
-					this.showToast('Succes Register')
-					// console.log('succes===>', response.data)
-					this.props.navigation.navigate('Login')
+		const formData = new FormData()
+		formData.append('name', name)
+		formData.append('email', email)
+		formData.append('phone', phone)
+		formData.append('password', password)
+		Axios.post('http://192.168.100.149:9400/api/user/register', formData)
+			.then(response => {
+				this.showToast('Succes Register, please login')
+				this.props.navigation.replace('Login')
+				this.setState({
+					loadingBtn: false,
 				})
-				.catch(error => {
-					this.showToast('Failed Register')
-					console.log(error)
+			})
+			.catch(error => {
+				if (error.response.data.message === 'User already exists') {
+					this.showToast(error.response.data.message)
+				}
+
+				this.setState({
+					errors: error.response.data.message,
+					loadingBtn: false,
 				})
-		}
+			})
 	}
 
 	render() {
@@ -122,6 +119,18 @@ class Register extends Component {
 							onChangeText={email => this.setState({ email: email })}
 						/>
 					</Item>
+					{this.state.errors && (
+						<Text
+							style={{
+								marginLeft: 16,
+								marginTop: 3,
+								color: 'red',
+								marginBottom: -20,
+							}}>
+							{this.state.errors.email}
+						</Text>
+					)}
+
 					<Item floatingLabel>
 						<Label>Name</Label>
 						<Input
@@ -129,13 +138,35 @@ class Register extends Component {
 							onChangeText={name => this.setState({ name: name })}
 						/>
 					</Item>
+					{this.state.errors && (
+						<Text
+							style={{
+								marginLeft: 16,
+								marginTop: 3,
+								color: 'red',
+								marginBottom: -20,
+							}}>
+							{this.state.errors.name}
+						</Text>
+					)}
 					<Item floatingLabel>
-						<Label>No. Telepon</Label>
+						<Label>Phone</Label>
 						<Input
 							keyboardType={'phone-pad'}
 							onChangeText={phone => this.setState({ phone: phone })}
 						/>
 					</Item>
+					{this.state.errors && (
+						<Text
+							style={{
+								marginLeft: 16,
+								marginTop: 3,
+								color: 'red',
+								marginBottom: -20,
+							}}>
+							{this.state.errors.phone}
+						</Text>
+					)}
 					<Item floatingLabel>
 						<Label>Password</Label>
 						<Input
@@ -143,33 +174,52 @@ class Register extends Component {
 							secureTextEntry={this.state.showPass}
 							autoCapitalize='none'
 						/>
+
 						<Icon
 							onPress={this.showPass.bind(this)}
 							type='FontAwesome5'
 							name={this.state.press == false ? 'eye-slash' : 'eye'}
-							// name={this.state.isSecure ? 'eye-slash' : 'eye'}
 							style={{ fontSize: 18, color: '#4B4C72' }}
 						/>
 					</Item>
+					{this.state.errors && (
+						<Text
+							style={{
+								marginLeft: 16,
+								marginTop: 3,
+								color: 'red',
+								marginBottom: -20,
+							}}>
+							{this.state.errors.password}
+						</Text>
+					)}
 				</Form>
 
-				{/*READY BUTTON SUBMIT*/}
-				<View></View>
-
-				<TouchableOpacity style={styles.button} onPress={this.handleRegister}>
-					<Text
-						style={{
-							color: '#FFF',
-							marginTop: '5%',
-
-							fontSize: 25,
-						}}>
-						Create Account
-					</Text>
-				</TouchableOpacity>
+				{this.state.loadingBtn ? (
+					<TouchableOpacity
+						style={[styles.button, { backgroundColor: 'grey' }]}>
+						<ActivityIndicator
+							size='small'
+							color='white'
+							style={{ marginTop: 17 }}
+						/>
+					</TouchableOpacity>
+				) : (
+					<TouchableOpacity style={styles.button} onPress={this.handleRegister}>
+						<Text
+							style={{
+								color: '#FFF',
+								fontSize: 16,
+								marginTop: 18,
+								fontWeight: 'bold',
+							}}>
+							Create Account
+						</Text>
+					</TouchableOpacity>
+				)}
 
 				<TouchableOpacity
-					onPress={() => this.props.navigation.navigate('Login')}
+					onPress={() => this.props.navigation.replace('Login')}
 					style={{ alignSelf: 'center' }}>
 					<Text style={{ color: '#403E57', fontSize: 13, marginTop: '5%' }}>
 						Already Have a Account?{' '}
@@ -206,7 +256,8 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		textAlign: 'center',
 		color: '#0f234e',
-		marginTop: '5%',
+		marginTop: '15%',
+		fontWeight: 'bold',
 	},
 	form: {
 		marginRight: '5%',
@@ -218,11 +269,10 @@ const styles = StyleSheet.create({
 
 	button: {
 		marginTop: '10%',
-
 		marginHorizontal: 30,
 		backgroundColor: '#0f234e',
-		borderRadius: 10,
-		height: 52,
+		borderRadius: 5,
+		height: 42,
 		width: 300,
 		alignItems: 'center',
 		justifyContent: 'center',

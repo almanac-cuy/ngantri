@@ -5,6 +5,7 @@ import {
 	StyleSheet,
 	Text,
 	ToastAndroid,
+	ActivityIndicator,
 } from 'react-native'
 import { Item, Input, Icon } from 'native-base'
 import Axios from 'axios'
@@ -17,6 +18,10 @@ export default class Form extends Component {
 			press: false,
 			visible: false,
 			toastMsg: '',
+			email: '',
+			password: '',
+			errors: null,
+			loadingBtn: false,
 		}
 	}
 
@@ -52,23 +57,28 @@ export default class Form extends Component {
 	}
 
 	handleLogin = async () => {
-		// this.showToast('Login')
+		this.setState({
+			loadingBtn: true,
+		})
 		const email = this.state.email
 		const password = this.state.password
-		// console.log('email:', email, '\n', 'password:', password)
 		const formData = new FormData()
 		formData.append('email', email)
 		formData.append('password', password)
 		Axios.post('http://192.168.100.149:9400/api/user/login', formData)
 			.then(async response => {
 				this.showToast('Login Succes')
-				console.log(response.data)
 				await AsyncStorage.setItem('user_token', response.data)
 				this.props.navigation.navigate('Home')
 			})
 			.catch(error => {
-				this.showToast('Login Failed')
-				console.log(error)
+				this.setState({
+					loadingBtn: false,
+				})
+				this.setState({
+					errors: error.response.data.message,
+				})
+				console.log(error.response.data.message)
 			})
 	}
 
@@ -86,42 +96,80 @@ export default class Form extends Component {
 
 		return (
 			<View style={styles.header}>
-				<Text style={styles.welcome}>Login</Text>
-				<Item style={{ marginBottom: 10 }}>
-					<Input
-						placeholder={'Email'}
-						keyboardType={'email-address'}
-						autoCapitalize={'none'}
-						onChangeText={email => this.setState({ email: email })}
-					/>
-				</Item>
+				<Text style={styles.welcome}>Hi, Welcome Back !</Text>
+				<View style={{ paddingHorizontal: 10, marginHorizontal: 10 }}>
+					<Item style={{ marginBottom: 10 }}>
+						<Input
+							placeholder={'Email'}
+							keyboardType={'email-address'}
+							autoCapitalize={'none'}
+							onChangeText={email => this.setState({ email: email })}
+						/>
+					</Item>
+					{this.state.errors && (
+						<Text
+							style={{
+								marginLeft: 5,
+								fontSize: 14,
+								color: 'red',
+								marginBottom: 10,
+							}}>
+							{this.state.errors.email}
+						</Text>
+					)}
 
-				<Item>
-					<Input
-						placeholder={'Password'}
-						onChangeText={password => this.setState({ password: password })}
-						secureTextEntry={this.state.showPass}
-						autoCapitalize='none'
-					/>
-					<TouchableOpacity onPress={this.showPass.bind(this)}>
-						<Icon
-							type='Entypo'
-							name={this.state.press == false ? 'eye-with-line' : 'eye'}
+					<Item>
+						<Input
+							placeholder={'Password'}
+							onChangeText={password => this.setState({ password: password })}
+							secureTextEntry={this.state.showPass}
+							autoCapitalize='none'
+						/>
+						<TouchableOpacity onPress={this.showPass.bind(this)}>
+							<Icon
+								style={{ fontSize: 18 }}
+								type='Entypo'
+								name={this.state.press == false ? 'eye-with-line' : 'eye'}
+							/>
+						</TouchableOpacity>
+					</Item>
+					{this.state.errors && (
+						<Text
+							style={{
+								marginLeft: 5,
+								fontSize: 14,
+								color: 'red',
+								marginBottom: 10,
+							}}>
+							{this.state.errors.password}
+						</Text>
+					)}
+				</View>
+
+				{this.state.loadingBtn ? (
+					<TouchableOpacity
+						style={[styles.button, { backgroundColor: 'grey' }]}>
+						<ActivityIndicator
+							size='small'
+							color='white'
+							style={{ marginBottom: 12 }}
 						/>
 					</TouchableOpacity>
-				</Item>
-				<TouchableOpacity style={styles.button} onPress={this.handleLogin}>
-					<Text
-						style={{
-							color: '#FFF',
-							paddingBottom: '5%',
-							fontSize: 20,
-						}}>
-						Login
-					</Text>
-				</TouchableOpacity>
+				) : (
+					<TouchableOpacity style={styles.button} onPress={this.handleLogin}>
+						<Text
+							style={{
+								color: '#FFF',
+								fontSize: 16,
+								marginBottom: 23,
+								fontWeight: 'bold',
+							}}>
+							Login
+						</Text>
+					</TouchableOpacity>
+				)}
+
 				<TouchableOpacity
-					// onPress={() => this.props.navigation.replace('Register')}
 					onPress={() =>
 						this.props.navigation.replace('Register', {
 							itemId: 2,
@@ -135,7 +183,6 @@ export default class Form extends Component {
 							style={{
 								color: '#0f234e',
 								fontWeight: '500',
-								fontFamily: 'bold',
 							}}>
 							Register Now
 						</Text>
@@ -152,37 +199,20 @@ const styles = StyleSheet.create({
 	},
 	welcome: {
 		fontSize: 30,
-		// fontWeight: '400',
 		textAlign: 'center',
 		color: '#0f234e',
-		marginTop: '5%',
-		// marginRight: '5%',
-		// marginBottom: 120,
+		marginTop: 0,
+		fontWeight: 'bold',
+		marginBottom: 30,
 	},
 	button: {
 		marginTop: '10%',
 		marginHorizontal: 30,
 		backgroundColor: '#0f234e',
-		borderRadius: 10,
-		height: 52,
+		borderRadius: 5,
+		height: 42,
 		width: 300,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 })
-
-// import React, { Component } from 'react'
-// import { View, TouchableOpacity, Text } from 'react-native'
-// import Form from '../Components/Form'
-
-// export default class Login extends Component {
-// 	render() {
-// 		return (
-// 			<View>
-// 				<Form
-
-// 				/>
-// 			</View>
-// 		)
-// 	}
-// }

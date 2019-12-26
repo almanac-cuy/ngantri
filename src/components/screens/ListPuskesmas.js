@@ -7,6 +7,7 @@ import {
 	StyleSheet,
 	TextInput,
 	TouchableOpacity,
+	StatusBar,
 } from 'react-native'
 import {
 	Container,
@@ -19,20 +20,27 @@ import {
 	Button,
 	Icon,
 	Left,
+	Right,
+	Body,
+	Title,
 } from 'native-base'
 // import ServicePuskesmas from './ServicePuskesmas'
 
 export default class ListPuskesmas extends Component {
-	state = {
-		idCategory: this.props.navigation.getParam('idItem'),
-		listInstances: [],
+	constructor(props) {
+		super(props)
+		this.state = {
+			category: this.props.navigation.getParam('category', ''),
+			listInstances: [],
+		}
 	}
 
 	componentDidMount() {
-		const { idCategory } = this.state
+		const { category } = this.state
+		console.log(category)
 		axios
 			.get(
-				`http://192.168.100.149:9400/api/instances/search?cat_id=${idCategory}`
+				`http://192.168.100.149:9400/api/instances/search?cat_id=${category._id}`
 			)
 			.then(response => {
 				this.setState({
@@ -45,34 +53,29 @@ export default class ListPuskesmas extends Component {
 	}
 
 	render() {
-		const { listInstances } = this.state
-		console.log(listInstances)
+		const { listInstances, category } = this.state
+		console.log(category)
 		return (
 			<View>
-				<TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-					<Icon
-						style={{
-							width: 23,
-							fontSize: 35,
-							marginLeft: '6%',
-							marginTop: '10%',
-							color: '#0f234e',
-						}}
-						name='arrow-back'
-					/>
-				</TouchableOpacity>
-				<View style={styles.wrapper}>
-					<View style={styles.searchContainer}>
-						<Icon type='Ionicons' name='ios-search' style={styles.searchIcon} />
+				<Header style={styles.header}>
+					<StatusBar backgroundColor='#6d63ff' />
+					<Left>
+						<Button transparent onPress={() => this.props.navigation.goBack()}>
+							<Icon
+								type='FontAwesome5'
+								style={{ color: '#f3f5f7', fontSize: 20 }}
+								name='arrow-left'
+							/>
+						</Button>
+					</Left>
+					<Body>
+						<Title>{category.name}</Title>
+					</Body>
 
-						<TextInput placeholder='Test "Sleman"' style={styles.textInput} />
-					</View>
-				</View>
-				<View style={{ marginTop: '-12%', marginLeft: '5%' }}>
-					<Text style={{ fontFamily: 'bold', color: '#0f234e', fontSize: 20 }}>
-						List Puskesmas
-					</Text>
-				</View>
+					<Right>
+						<TouchableOpacity></TouchableOpacity>
+					</Right>
+				</Header>
 				<ScrollView>
 					<Container style={{ marginTop: '5%' }}>
 						<Content>
@@ -83,27 +86,22 @@ export default class ListPuskesmas extends Component {
 										onPress={() =>
 											this.props.navigation.navigate('ServicePuskesmas', {
 												idInstance: instance._id,
+												instance,
 											})
 										}>
 										<Card
 											style={{
-												flex: 0,
+												flex: 1,
 												marginLeft: '5%',
 												marginRight: '5%',
-												borderRadius: 20,
+												borderRadius: 0,
 											}}>
 											<CardItem
 												style={{
 													alignItems: 'flex-start',
 													justifyContent: 'space-between',
 												}}>
-												<View
-													style={
-														{
-															// borderWidth: 1,
-															// marginRight: 120,
-														}
-													}>
+												<View>
 													<Image
 														source={{
 															uri: instance.image,
@@ -111,25 +109,36 @@ export default class ListPuskesmas extends Component {
 														style={{
 															height: 100,
 															width: 100,
-															resizeMode: 'contain',
+															resizeMode: 'cover',
 														}}
 													/>
 												</View>
 
 												<View
 													style={{
-														// left: 150,
-														// bottom: 40,
-
 														marginLeft: 10,
 														width: 170,
 														paddingRight: 40,
-														// borderWidth: 1,
 													}}>
 													<View>
-														<Text numberOfLines={1}>{instance.name}</Text>
-														<Text numberOfLines={3}>
-															Alamat : {instance.address}
+														<Text
+															numberOfLines={2}
+															style={{
+																fontSize: 16,
+																width: 150,
+															}}>
+															{instance.name}
+														</Text>
+														<Text
+															numberOfLines={3}
+															style={{
+																fontSize: 13,
+																width: 150,
+																marginTop: 3,
+																textAlign: 'justify',
+																color: 'grey',
+															}}>
+															{instance.address}
 														</Text>
 													</View>
 												</View>
@@ -146,6 +155,10 @@ export default class ListPuskesmas extends Component {
 	}
 }
 const styles = StyleSheet.create({
+	header: {
+		backgroundColor: '#6d63ff',
+		elevation: 0,
+	},
 	wrapper: {
 		position: 'relative',
 		top: '-5%',
@@ -154,7 +167,6 @@ const styles = StyleSheet.create({
 		width: '80%',
 		height: 80,
 		marginLeft: '20%',
-		// zIndex: 1,
 	},
 	searchContainer: {
 		display: 'flex',
