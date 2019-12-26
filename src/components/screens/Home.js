@@ -78,7 +78,8 @@ class Home extends Component {
 							</Button>
 						</Left>
 						<Right>
-							<TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => this.props.navigation.navigate('ProfilePage')}>
 								<Image
 									style={{ height: 32, width: 32, borderRadius: 32 / 2 }}
 									source={{
@@ -103,7 +104,6 @@ class Home extends Component {
 								marginTop: -350,
 							}}>
 							<H1
-								onPress={() => this.props.navigation.navigate('Profile')}
 								style={{ fontWeight: 'bold', fontSize: 32, color: '#f3f5f7' }}>
 								Hai {this.state.profile.name}
 							</H1>
