@@ -6,7 +6,11 @@ import {
 	TouchableOpacity,
 	StatusBar,
 	ScrollView,
+	ActivityIndicator,
 } from 'react-native'
+import jwt_decode from 'jwt-decode'
+import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage'
 import {
 	Container,
 	Header,
@@ -23,7 +27,50 @@ import {
 } from 'native-base'
 
 export default class History extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			user: this.props.navigation.getParam('id_user'),
+			history: [],
+			loading: true,
+		}
+	}
+	componentDidMount() {
+		// this.getUser()
+		this.getHistory()
+	}
+	// async getUser() {
+	// 	const data = await AsyncStorage.getItem('user_token')
+	// 	this.setState({
+	// 		user: jwt_decode(data),
+	// 	})
+	// }
+	getHistory = async () => {
+		axios
+			.get(`http://192.168.100.149:9400/api/history/${this.state.user}`)
+			.then(response => {
+				console.log(response.data.history)
+				setTimeout(() => {
+					this.setState({
+						loading: false,
+						history: response.data.history,
+					})
+				}, 1000)
+			})
+			.catch(error => {
+				console.log(error)
+				setTimeout(() => {
+					this.setState({
+						loading: false,
+					})
+				}, 1000)
+			})
+	}
 	render() {
+		console.log(this.state.history)
+
+		// console.log(this.state.history)
+
 		return (
 			<>
 				<Header style={styles.header}>
@@ -46,25 +93,60 @@ export default class History extends Component {
 					</Right>
 				</Header>
 				<ScrollView>
-					<Content>
-						<Card
-							style={{
-								flex: 1,
-								marginLeft: '5%',
-								marginRight: '5%',
-								marginTop: '5%',
-								borderRadius: 0,
-							}}>
-							<CardItem>
-								<Body>
-									<Text>Kantor Kelurahan Pogung</Text>
-									<Text>Pembuatan Ktp</Text>
-									<Text>Tanggal :</Text>
-									<Text>Done</Text>
-								</Body>
-							</CardItem>
-						</Card>
-					</Content>
+					{/* {this.state.loading} */}
+
+					{this.state.loading ? (
+						<View style={styles.loading}>
+							<ActivityIndicator size='large' color='#0000ff' />
+						</View>
+					) : this.state.history.length > 0 ? (
+						<Content>
+							{this.state.history.map((history, index) => (
+								<Card
+									style={{
+										flex: 1,
+										marginLeft: '5%',
+										marginRight: '5%',
+										marginTop: '5%',
+										borderRadius: 0,
+									}}>
+									<CardItem>
+										<Body>
+											<Text
+												style={{
+													fontSize: 15,
+													fontWeight: 'bold',
+												}}>
+												{history.instance_name}
+											</Text>
+											<Text>{history.service}</Text>
+											<Text>Tanggal : {history.date}</Text>
+											<Text
+												style={{
+													alignSelf: 'center',
+													fontSize: 20,
+													fontWeight: 'bold',
+													color: 'green',
+												}}>
+												Done
+											</Text>
+										</Body>
+									</CardItem>
+								</Card>
+							))}
+						</Content>
+					) : (
+						<View style={styles.history}>
+							<Icon
+								type='FontAwesome'
+								name='send-o'
+								style={styles.iconhistory}
+							/>
+							<Text style={styles.texthistory}>
+								Kamu Tidak memiliki "History"
+							</Text>
+						</View>
+					)}
 				</ScrollView>
 			</>
 		)
@@ -74,5 +156,26 @@ const styles = StyleSheet.create({
 	header: {
 		backgroundColor: '#6d63ff',
 		elevation: 0,
+	},
+	history: {
+		alignItems: 'center',
+		marginTop: '65%',
+	},
+	texthistory: {
+		color: '#919191',
+		fontSize: 15,
+	},
+	iconhistory: {
+		fontSize: 40,
+		color: '#919191',
+		marginBottom: '5%',
+	},
+	loading: {
+		// flex: 1,
+		// alignSelf: 'center',
+		justifyContent: 'center',
+		alignItems: 'center',
+		alignContent: 'center',
+		paddingVertical: '80%',
 	},
 })
