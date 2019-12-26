@@ -1,5 +1,28 @@
 import React, { Component } from 'react'
 import {
+
+	Text,
+	View,
+	TouchableOpacity,
+	StyleSheet,
+	Image,
+	StatusBar,
+} from 'react-native'
+import {
+	Container,
+	Header,
+	Left,
+	Button,
+	Icon,
+	Right,
+	Body,
+	Title,
+	H1,
+	H3,
+} from 'native-base'
+import jwt_decode from 'jwt-decode'
+import AsyncStorage from '@react-native-community/async-storage'
+
 	StyleSheet,
 	Text,
 	View,
@@ -9,25 +32,72 @@ import {
 } from 'react-native'
 import { Icon } from 'native-base'
 
+
 export default class Profile extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			profile: [],
+		}
+	}
+
+	componentDidMount() {
+		this.getProfile()
+	}
+
+	async getProfile() {
+		const data = await AsyncStorage.getItem('user_token')
+		this.setState({
+			profile: jwt_decode(data),
+		})
+	}
+
 	render() {
+		console.log(this.state.profile)
+
 		return (
+
+			<Container>
+				<StatusBar backgroundColor='#0f234e' />
+				<View style={{ flex: 1, backgroundColor: 'rgba(192,192,192,0.3)' }}>
+					<View style={styles.header}>
+						<TouchableOpacity
+							onPress={() => this.props.navigation.goBack()}
+							style={{ paddingTop: 10, paddingLeft: 10 }}>
+							<Icon
+								type='FontAwesome'
+								style={{ color: 'white', fontSize: 20 }}
+								name='arrow-left'
+							/>
+						</TouchableOpacity>
+
 			<>
 				<StatusBar backgroundColor='black' />
 				<View style={{ flex: 1, backgroundColor: 'rgba(192,192,192,0.3)' }}>
 					<View style={styles.header}>
 						<Text style={styles.profiletag}>Profile</Text>
+
 					</View>
 					<Image
 						style={styles.avatar}
 						source={{
+
+							uri: `http:${this.state.profile.avatar}`,
+
 							uri:
 								'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTh6iD4NmOaeFexRWXdkckExxeLGUbRniiyCwQ6duX3Xw047r_q&s',
+
 						}}
 					/>
 					<View style={styles.wrapperBody}>
 						<View style={styles.body}>
 							<View style={styles.bodyContent}>
+
+								<Text style={styles.name}>{this.state.profile.name}</Text>
+								<Text style={styles.email}>{this.state.profile.email}</Text>
+								<View style={styles.line}></View>
+
+
 								<Text style={styles.name}>Afshori Project Manager</Text>
 								<Text style={styles.email}>afshorilead@gmail.com</Text>
 								<View style={styles.line}></View>
@@ -44,6 +114,7 @@ export default class Profile extends Component {
 										style={styles.iconMenuRight}
 									/>
 								</View>
+
 								<View style={styles.menuinner}>
 									<Icon
 										type='FontAwesome5'
@@ -57,6 +128,21 @@ export default class Profile extends Component {
 										style={styles.iconMenuRight}
 									/>
 								</View>
+
+
+								<TouchableOpacity
+									style={styles.menuinner}
+									onPress={async () => {
+										await AsyncStorage.clear()
+										this.props.navigation.navigate('Auth')
+									}}>
+									<Icon
+										type='Foundation'
+										name='refresh'
+										style={styles.iconMenuLeft}
+									/>
+									<Text style={styles.menuText}>Logout</Text>
+
 								<View style={styles.menuinner}>
 									<Icon
 										type='Foundation'
@@ -64,11 +150,15 @@ export default class Profile extends Component {
 										style={styles.iconMenuLeft}
 									/>
 									<Text style={styles.menuText}>Share with friends</Text>
+
 									<Icon
 										type='Entypo'
 										name='chevron-thin-right'
 										style={styles.iconMenuRight}
 									/>
+
+								</TouchableOpacity>
+
 								</View>
 								<View style={styles.menuinner}>
 									<Icon
@@ -96,10 +186,22 @@ export default class Profile extends Component {
 										style={styles.iconMenuRight}
 									/>
 								</View>
+
 							</View>
 						</View>
 					</View>
 				</View>
+
+			</Container>
+		)
+	}
+}
+
+const styles = StyleSheet.create({
+	header: {
+		backgroundColor: '#0f234e',
+		height: 250,
+
 			</>
 		)
 	}
@@ -108,6 +210,7 @@ const styles = StyleSheet.create({
 	header: {
 		backgroundColor: 'black',
 		height: 270,
+
 		borderBottomRightRadius: 50,
 		borderBottomLeftRadius: 50,
 	},
@@ -122,7 +225,11 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 130,
 		height: 130,
+
+		borderRadius: 10,
+
 		borderRadius: 63,
+
 		borderWidth: 4,
 		borderColor: '#919191',
 		marginBottom: 10,
@@ -193,6 +300,8 @@ const styles = StyleSheet.create({
 		color: 'grey',
 	},
 })
+
+
 {
 	/* <TouchableOpacity
 	onPress={() => this.props.navigation.openDrawer()}
@@ -201,3 +310,4 @@ const styles = StyleSheet.create({
 {
 	/* </TouchableOpacity> */
 }
+
