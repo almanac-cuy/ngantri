@@ -1,24 +1,15 @@
 import React, { Component } from 'react'
 import { ImageBackground, ActivityIndicator } from 'react-native'
-import { Container, View } from 'native-base'
+import { Container, View, Text } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage'
 
 export default class Splash extends Component {
 	async componentDidMount() {
 		const token = await AsyncStorage.getItem('user_token')
-
 		if (token) {
-			// this.props.getUser(user.uid);
-			// if (this.props.user != null) {
-			setTimeout(() => {
-				// go to Home page
-				this.props.navigation.navigate('Home')
-			}, 1500)
-			// }
+			this.props.navigation.navigate('Home')
 		} else {
-			setTimeout(() => {
-				this.props.navigation.navigate('Auth')
-			}, 2000)
+			this.props.navigation.navigate('Auth')
 		}
 	}
 
@@ -26,26 +17,27 @@ export default class Splash extends Component {
 		return (
 			<Container>
 				<View>
-					{/* <Content> */}
-
-					{/* </Content> */}
 					<ImageBackground
 						style={{
-							alignItems: 'center',
-							justifyContent: 'space-evenly',
+							// alignItems: 'center',
+							// justifyContent: 'space-evenly',
 							width: '100%',
 							height: '100%',
 						}}
-						source={{
-							uri:
-								'https://forums.crackberry.com/attachments/blackberry-10-wallpapers-f308/182934d1373923251t-blackberry-10-loading-wallpaper-fullback.jpg',
-						}}>
+						source={require('../../assets/bgImage.png')}>
 						<View
 							style={{
 								top: 150,
 								alignItems: 'center',
 								justifyContent: 'center',
 							}}>
+							<Text
+								style={{ fontSize: 60, color: '#f3f5f7', fontWeight: 'bold' }}>
+								NGANTRI
+							</Text>
+							<Text style={{ color: '#f3f5f7', fontWeight: '100' }}>
+								by Almanac Team
+							</Text>
 							<ActivityIndicator size='large' color='white' />
 						</View>
 					</ImageBackground>
