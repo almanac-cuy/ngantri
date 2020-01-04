@@ -128,8 +128,8 @@ export default class Form extends Component {
 						<TouchableOpacity onPress={this.showPass.bind(this)}>
 							<Icon
 								style={{ fontSize: 18 }}
-								type='Entypo'
-								name={this.state.press == false ? 'eye-with-line' : 'eye'}
+								type='FontAwesome5'
+								name={this.state.press == false ? 'eye-slash' : 'eye'}
 							/>
 						</TouchableOpacity>
 					</Item>
@@ -178,7 +178,7 @@ export default class Form extends Component {
 					}
 					style={{ alignSelf: 'center' }}>
 					<Text style={{ color: '#403E57', fontSize: 13, marginTop: '5%' }}>
-						You don't have have an account?{' '}
+						You don't have have an account?
 						<Text
 							style={{
 								color: '#0f234e',
@@ -192,7 +192,6 @@ export default class Form extends Component {
 		)
 	}
 }
-
 const styles = StyleSheet.create({
 	header: {
 		marginTop: '50%',
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
 	button: {
 		marginTop: '10%',
 		marginHorizontal: 30,
-		backgroundColor: '#0f234e',
+		backgroundColor: '#6d63ff',
 		borderRadius: 5,
 		height: 42,
 		width: 300,

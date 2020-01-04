@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Axios from 'axios'
 import {
 	Container,
 	Header,
@@ -20,6 +21,7 @@ import {
 	ScrollView,
 	PermissionsAndroid,
 	Platform,
+	Alert,
 } from 'react-native'
 import Maps from '../Components/Maps'
 import axios from 'axios'
@@ -161,9 +163,38 @@ class Queue extends Component {
 		})
 	}
 
+	handleHistory = () => {
+		this.setState({
+			loadingBtn: true,
+		})
+		const instance_name = this.state.instance.name
+		const instance_id = this.state.instance._id
+
+		const service = this.state.service.name
+
+		const formData = new FormData()
+		formData.append('instance_name', instance_name)
+		formData.append('instance_id', instance_id)
+
+		formData.append('service', service)
+		Axios.post(
+			`http://192.168.100.149:9400/api/history/new/${this.state.user._id}`,
+			formData
+		)
+			.then(response => {
+				this.props.navigation.replace('Home')
+				this.setState({
+					loadingBtn: false,
+				})
+			})
+			.catch(error => console.log(error))
+	}
+
 	render() {
 		const { instance, service, latitude, longitude, user } = this.state
-		console.log(user)
+		console.log(service)
+		console.log(instance)
+
 		return (
 			<>
 				<Header style={{ backgroundColor: '#6d63ff' }}>
@@ -244,20 +275,39 @@ class Queue extends Component {
 
 						<Button
 							onPress={() => {
-								this.props.navigation.replace('Done', {
-									estimatedDuration: Math.round(
-										(this.state.duration + service.duration) / 60
-									),
-									region: {
-										originLat: latitude,
-										originLon: longitude,
-										desLat: instance.latitude,
-										desLon: instance.longitude,
-									},
-									direction: this.state.direction,
-								})
+								Alert.alert(
+									'Confirm',
+									'Do you want to queue?',
+									[
+										{
+											text: 'Cancel',
+											onPress: () => this.props.navigation.goBack(),
+											style: 'cancel',
+										},
+										{
+											text: 'OK',
+											onPress: () => (
+												// this.props.navigation.replace('Done')
+												this.props.navigation.replace('Done', {
+													estimatedDuration: Math.round(
+														(this.state.duration + service.duration) / 60
+													),
+													region: {
+														originLat: latitude,
+														originLon: longitude,
+														desLat: instance.latitude,
+														desLon: instance.longitude,
+													},
+													direction: this.state.direction,
+												}),
+												this.setQueue(),
+												this.handleHistory()
+											),
+										},
+									],
 
-								this.setQueue()
+									{ cancelable: false }
+								)
 							}}
 							style={{
 								marginTop: 10,

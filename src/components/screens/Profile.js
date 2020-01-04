@@ -6,6 +6,8 @@ import {
 	StyleSheet,
 	Image,
 	StatusBar,
+	Alert,
+	ToastAndroid,
 } from 'react-native'
 import {
 	Container,
@@ -26,8 +28,54 @@ export default class Profile extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			profile: [],
+			profile: {},
+			toastMsg: '',
+			visible: false,
 		}
+	}
+	showToast = msg => {
+		this.setState(
+			{
+				visible: true,
+				toastMsg: msg,
+			},
+			() => {
+				this.hideToast()
+			}
+		)
+	}
+
+	hideToast = () => {
+		this.setState({
+			visible: false,
+		})
+	}
+	alertHandler = () => {
+		//function to make two option alert
+		Alert.alert(
+			//title
+			`Hello ${this.state.profile.name}`,
+			//body
+			'Are you sure you want to logout from your Ngantri account ?',
+			[
+				{
+					text: 'Yes',
+					onPress: async () => {
+						this.showToast('Logout Succes')
+						await AsyncStorage.clear()
+						this.props.navigation.navigate('Auth')
+					},
+				},
+
+				{
+					text: 'No',
+					onPress: () => console.log('No Pressed'),
+					style: 'cancel',
+				},
+			],
+			{ cancelable: false }
+			//clicking out side of alert will not cancel
+		)
 	}
 
 	componentDidMount() {
@@ -42,12 +90,27 @@ export default class Profile extends Component {
 	}
 
 	render() {
+		if (this.state.visible) {
+			ToastAndroid.showWithGravityAndOffset(
+				this.state.toastMsg,
+				ToastAndroid.LONG,
+				ToastAndroid.BOTTOM,
+				25,
+				50
+			)
+			return null
+		}
+
 		console.log(this.state.profile)
 
 		return (
 			<Container>
-				<StatusBar backgroundColor='#0f234e' />
-				<View style={{ flex: 1, backgroundColor: 'rgba(192,192,192,0.3)' }}>
+				<StatusBar backgroundColor='#6d63ff' />
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: 'rgba(192,192,192,0.3)',
+					}}>
 					<View style={styles.header}>
 						<TouchableOpacity
 							onPress={() => this.props.navigation.goBack()}
@@ -85,16 +148,32 @@ export default class Profile extends Component {
 										style={styles.iconMenuRight}
 									/>
 								</View>
+								<TouchableOpacity
+									style={styles.menuinner}
+									onPress={() =>
+										this.props.navigation.navigate('History', {
+											id_user: this.state.profile._id,
+										})
+									}>
+									<Icon
+										type='FontAwesome'
+										name='history'
+										style={styles.iconMenuLeft}
+									/>
+									<Text style={styles.menuText}>History</Text>
+									<Icon
+										type='Entypo'
+										name='chevron-thin-right'
+										style={styles.iconMenuRight}
+									/>
+								</TouchableOpacity>
 
 								<TouchableOpacity
 									style={styles.menuinner}
-									onPress={async () => {
-										await AsyncStorage.clear()
-										this.props.navigation.navigate('Auth')
-									}}>
+									onPress={this.alertHandler}>
 									<Icon
-										type='Foundation'
-										name='refresh'
+										type='AntDesign'
+										name='logout'
 										style={styles.iconMenuLeft}
 									/>
 									<Text style={styles.menuText}>Logout</Text>
@@ -115,7 +194,7 @@ export default class Profile extends Component {
 
 const styles = StyleSheet.create({
 	header: {
-		backgroundColor: '#0f234e',
+		backgroundColor: '#6d63ff',
 		height: 250,
 		borderBottomRightRadius: 50,
 		borderBottomLeftRadius: 50,

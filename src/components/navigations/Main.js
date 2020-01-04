@@ -13,6 +13,8 @@ import ListPuskesmas from '../screens/ListPuskesmas'
 import Splash from './../screens/Splash'
 import Done from '../screens/Done'
 import MapDirections from '../screens/MapDirections'
+import History from '../screens/History'
+import Profile from '../screens/Profile'
 
 const AuthStack = createStackNavigator(
 	{
@@ -30,11 +32,13 @@ const AppStack = createStackNavigator(
 	{
 		DrawerNavigator: DrawerNavigator,
 		Home: Home,
+		ProfilePage: Profile,
 		ListDukCapil: ListDukCapil,
 		ServiceDukCapil: ServiceDukCapil,
 		ListPuskesmas: ListPuskesmas,
 		ServicePuskesmas: ServicePuskesmas,
 		Queue: Queue,
+		History: History,
 		Done,
 		MapDirections,
 	},
