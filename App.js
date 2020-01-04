@@ -1,11 +1,17 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
-import MainNav from './src/components/navigations/Main'
+
+import { StatusBar } from 'react-native'
+
+import Main from './src/components/navigations/Main'
 
 class App extends Component {
 	render() {
-		return <MainNav />
+		return (
+			<>
+				<StatusBar backgroundColor='#6d63ff' />
+				<Main />
+			</>
+		)
 	}
 }
-
 export default App
